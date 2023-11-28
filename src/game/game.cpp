@@ -34,13 +34,19 @@ bool Game::init() {
 
 void Game::run() {
     while (m_running) {
-        update();
+        // update user input
+        m_input.update();
+
+        // check if quit
+        if (m_input.key_pressed(K_QUIT)) {
+            m_running = false;
+        }
+
+        // update each entity and render it
+        update_render();
     }
 }
 
-void Game::update() {
-    m_input.update();
-    if (m_input.key_pressed(K_QUIT)) {
-        m_running = false;
-    }
+void Game::update_render() {
+    // TODO: Entity System
 }
