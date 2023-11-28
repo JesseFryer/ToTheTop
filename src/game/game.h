@@ -11,7 +11,7 @@ class Game {
         SDL_Surface* m_windowSurface;
 
     private:
-        void update();
+        void update_render(); // update and render each entity
 
     public:
         bool init();
