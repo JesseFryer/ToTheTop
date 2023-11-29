@@ -70,7 +70,7 @@ u32 Game::limit_frame_time() {
     } else if (deltaTime > MAX_FRAME_TIME) {
         // cap deltaTime to avoid physics glitches
         // simulation will slow down as a result
-        deltaTime = MAX_FRAME_TIME; 
+        deltaTime = MAX_FRAME_TIME;
     }
     m_lastTime = SDL_GetTicks();
     return deltaTime;
