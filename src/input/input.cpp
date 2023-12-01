@@ -1,10 +1,11 @@
 #include "input.h"
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <cstring>
 
 void InputState::init() {
     m_keyState = 0;
-    m_mouseState = {};
+    memset(&m_mouseState, 0, sizeof(MouseState));
 }
 
 void InputState::update() {

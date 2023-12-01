@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 #include "game.h"
 #include "../misc/settings.h"
@@ -30,7 +31,7 @@ bool Game::init() {
     SDL_UpdateWindowSurface(m_window);
 
     m_input.init();
-    m_stats = {};
+    memset(&m_stats, 0, sizeof(DevStats));
     m_lastTime = SDL_GetTicks();
     m_running = true;
 
