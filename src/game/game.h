@@ -7,12 +7,12 @@
 
 class Game {
     private:
-        bool         m_running;
-        InputState   m_input;
-        SDL_Window*  m_window;
-        SDL_Surface* m_windowSurface;
-        u32          m_lastTime;
-        DevStats     m_stats;
+        bool          m_running;
+        InputState    m_input;
+        SDL_Window*   m_window;
+        SDL_Renderer* m_renderer;
+        u32           m_lastTime;
+        DevStats      m_stats;
 
     private:
         void update_render(float timeStep); 
@@ -22,4 +22,5 @@ class Game {
     public:
         bool init();
         void run();
+        void quit();
 };

@@ -11,24 +11,25 @@ bool Game::init() {
     }
 
     m_window = SDL_CreateWindow(
-            "SDL2 Window",
+            "To The Top",
             SDL_WINDOWPOS_CENTERED, 
             SDL_WINDOWPOS_CENTERED,
             WIN_W, WIN_H,
             0);
-
     if (!m_window) {
         std::cout << "Failed to create window\n";
         return false;
     }
 
-    SDL_Surface* m_windowSurface = SDL_GetWindowSurface(m_window);
-    if (!m_windowSurface) {
-        std::cout << "Failed to get the surface from the window\n";
+    m_renderer = SDL_CreateRenderer(
+            m_window,
+            0,
+            SDL_RENDERER_ACCELERATED);
+    if (!m_renderer) {
+        std::cout << "Failed to create renderer\n";
         return false;
     }
 
-    SDL_UpdateWindowSurface(m_window);
 
     m_input.init();
     memset(&m_stats, 0, sizeof(DevStats));
@@ -56,7 +57,9 @@ void Game::run() {
 }
 
 void Game::update_render(float timeStep) {
-    SDL_Delay(6); // for now simulate it takes a bit
+    SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+    SDL_RenderPresent(m_renderer);
 }
 
 u32 Game::limit_frame_time() {
@@ -88,4 +91,10 @@ void Game::dev_record_frame() {
         m_stats.frames = 0;
         m_stats.timeAccumulator = 0;
     }
+}
+
+void Game::quit() {
+    SDL_DestroyRenderer(m_renderer);
+    SDL_DestroyWindow(m_window);
+    SDL_Quit();
 }
