@@ -31,12 +31,6 @@ bool Game::init() {
     }
 
     m_input->init();
-    m_ecs.init(m_renderer, m_input);
-
-    // player
-    u32 e = m_ecs.add_entity(
-            CMP_RECT | CMP_VELOCITY | CMP_POSITION | CMP_CONTROL);
-
     memset(&m_stats, 0, sizeof(DevStats));
     m_lastTime = SDL_GetTicks();
     m_running = true;
@@ -64,7 +58,6 @@ void Game::run() {
 void Game::update_render(float timeStep) {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
-    m_ecs.update(timeStep);
     SDL_RenderPresent(m_renderer);
 }
 
