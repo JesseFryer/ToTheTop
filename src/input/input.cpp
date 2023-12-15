@@ -5,7 +5,7 @@
 
 void InputState::init() {
     m_keyState = 0;
-    memset(&m_mouseState, 0, sizeof(MouseState));
+    m_mouseState = {};
 }
 
 void InputState::update() {

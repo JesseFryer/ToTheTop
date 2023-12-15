@@ -7,7 +7,7 @@ outdir="../../out/"
 src="../../src/main.cpp\
      ../../src/input/input.cpp\
      ../../src/game/game.cpp\
-     ../../src/ecs/ecs.cpp"
+     ../../src/ecs/scene.cpp"
 
 mkdir $outdir
 g++ -o $outdir$progname $src $compflags $linkflags

@@ -30,18 +30,23 @@ bool Game::init() {
         return false;
     }
 
-    m_input->init();
+    m_input.init();
+    m_scene.set_renderer(m_renderer);
+    m_scene.set_input(&m_input);
     memset(&m_stats, 0, sizeof(DevStats));
     m_lastTime = SDL_GetTicks();
     m_running = true;
+
+    // test out ecs
+    m_scene.add_render_component({0, 128, 128, 32, 32});
 
     return true;
 }
 
 void Game::run() {
     while (m_running) {
-        m_input->update();
-        if (m_input->key_pressed(K_QUIT)) {
+        m_input.update();
+        if (m_input.key_pressed(K_QUIT)) {
             m_running = false;
         }
 
@@ -56,9 +61,7 @@ void Game::run() {
 }
 
 void Game::update_render(float timeStep) {
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_renderer);
-    SDL_RenderPresent(m_renderer);
+    m_scene.update(timeStep);
 }
 
 u32 Game::limit_frame_time() {
