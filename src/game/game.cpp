@@ -38,7 +38,10 @@ bool Game::init() {
     m_running = true;
 
     // test out ecs
-    m_scene.add_render_component({0, 128, 128, 32, 32});
+    m_scene.add_render_component({0, 0, 0, 32, 32});
+    m_scene.add_velocity_component({0, 50, 50});
+    m_scene.add_position_component({0, 0, 0});
+    m_scene.add_control_component({0});
 
     return true;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include "components.h"
 #include "../input/input.h"
 
@@ -14,6 +15,13 @@ class Scene {
         void add_render_component(RenderComponent component);
         void add_control_component(ControlComponent component);
         void add_velocity_component(VelocityComponent component);
+        void add_position_component(PositionComponent component);
+
+        // retrieve components
+        int get_render_component(u64 eID);
+        int get_control_component(u64 eID);
+        int get_velocity_component(u64 eID);
+        int get_position_component(u64 eID);
 
     private:
         // house-keeping
@@ -21,18 +29,20 @@ class Scene {
         InputState* m_input;
         std::vector<u64> m_reusableEntityIDs;
 
-        // component buckets and query functions
+        // quick lookups
+        std::map<u64, u32> m_activeComponents;
+        bool has_components(u64 eID, u32 componentsMask);
+        void add_components(u64 eID, u32 componentsMask);
+
+        // component buckets
         std::vector<RenderComponent> m_renderComponents;
-        bool has_render_component(u64 eID);
-
         std::vector<ControlComponent> m_controlComponents;
-        bool has_control_component(u64 eID);
-
         std::vector<VelocityComponent> m_velocityComponents;
-        bool has_velocity_component(u64 eID);
+        std::vector<PositionComponent> m_positionComponents;
 
         // systems
         void system_render();
+        void system_move(float timeStep);
         void system_control();
 };
 
