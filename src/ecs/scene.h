@@ -12,6 +12,8 @@ class Scene {
 
         // add components
         void add_render_component(RenderComponent component);
+        void add_control_component(ControlComponent component);
+        void add_velocity_component(VelocityComponent component);
 
     private:
         // house-keeping
@@ -23,7 +25,14 @@ class Scene {
         std::vector<RenderComponent> m_renderComponents;
         bool has_render_component(u64 eID);
 
+        std::vector<ControlComponent> m_controlComponents;
+        bool has_control_component(u64 eID);
+
+        std::vector<VelocityComponent> m_velocityComponents;
+        bool has_velocity_component(u64 eID);
+
         // systems
         void system_render();
+        void system_control();
 };
 

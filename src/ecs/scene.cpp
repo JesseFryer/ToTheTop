@@ -27,6 +27,32 @@ bool Scene::has_render_component(u64 eID) {
     return false;
 }
 
+void Scene::add_control_component(ControlComponent component) {
+    m_controlComponents.push_back(component);
+}
+
+bool Scene::has_control_component(u64 eID) {
+    for (ControlComponent component : m_controlComponents) {
+        if (component.eID == eID) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Scene::add_velocity_component(VelocityComponent component) {
+    m_velocityComponents.push_back(component);
+}
+
+bool Scene::has_velocity_component(u64 eID) {
+    for (VelocityComponent component : m_velocityComponents) {
+        if (component.eID == eID) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ///////////////////// systems //////////////////////////
 
 void Scene::system_render() {
@@ -37,5 +63,12 @@ void Scene::system_render() {
         SDL_RenderFillRect(m_renderer, &component.rect);
     }
     SDL_RenderPresent(m_renderer);
+}
+
+void Scene::system_control() {
+    for (ControlComponent component : m_controlComponents) {
+        if (has_velocity_component(component.eID)) {
+        }
+    }
 }
 
