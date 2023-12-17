@@ -57,43 +57,44 @@ void Scene::add_position_component(PositionComponent component) {
 
 ////////////////// retrieve component indexes ////////////////////
 
-//TODO: since I'm assuming we know its in there we can use size_t
-//      and not bother having a failure value (-1)
-
-int Scene::get_render_component(u64 eID) {
-    for (int i = 0; i < m_renderComponents.size(); i++) {
-        if (m_renderComponents[i].eID == eID) {
-            return i;
+size_t Scene::get_render_component(u64 eID) {
+    size_t index;
+    for (index = 0; index < m_renderComponents.size(); index++) {
+        if (m_renderComponents[index].eID == eID) {
+            break;
         }
     }
-    return -1;
+    return index;
 }
 
-int Scene::get_control_component(u64 eID) {
-    for (int i = 0; i < m_controlComponents.size(); i++) {
-        if (m_controlComponents[i].eID == eID) {
-            return i;
+size_t Scene::get_control_component(u64 eID) {
+    size_t index;
+    for (index = 0; index < m_controlComponents.size(); index++) {
+        if (m_controlComponents[index].eID == eID) {
+            break;
         }
     }
-    return -1;
+    return index;
 }
 
-int Scene::get_velocity_component(u64 eID) {
-    for (int i = 0; i < m_velocityComponents.size(); i++) {
-        if (m_velocityComponents[i].eID == eID) {
-            return i;
+size_t Scene::get_velocity_component(u64 eID) {
+    size_t index;
+    for (index = 0; index < m_velocityComponents.size(); index++) {
+        if (m_velocityComponents[index].eID == eID) {
+            break;
         }
     }
-    return -1;
+    return index;
 }
 
-int Scene::get_position_component(u64 eID) {
-    for (int i = 0; i < m_positionComponents.size(); i++) {
-        if (m_positionComponents[i].eID == eID) {
-            return i;
+size_t Scene::get_position_component(u64 eID) {
+    size_t index;
+    for (index = 0; index < m_positionComponents.size(); index++) {
+        if (m_positionComponents[index].eID == eID) {
+            break;
         }
     }
-    return -1;
+    return index;
 }
 
 ///////////////////// systems //////////////////////////

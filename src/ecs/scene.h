@@ -17,11 +17,12 @@ class Scene {
         void add_velocity_component(VelocityComponent component);
         void add_position_component(PositionComponent component);
 
-        // retrieve components
-        int get_render_component(u64 eID);
-        int get_control_component(u64 eID);
-        int get_velocity_component(u64 eID);
-        int get_position_component(u64 eID);
+        // retrieve components (eID must be known to have the component)
+        // use has_components to find this out before calling these
+        size_t get_render_component(u64 eID);
+        size_t get_control_component(u64 eID);
+        size_t get_velocity_component(u64 eID);
+        size_t get_position_component(u64 eID);
 
     private:
         // house-keeping
