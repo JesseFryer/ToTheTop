@@ -55,6 +55,17 @@ void Scene::add_position_component(PositionComponent component) {
     }
 }
 
+u64 Scene::get_new_eid() {
+    u64 eID;
+    if (m_reusableEntityIDs.empty()) {
+        eID = m_entityCount++;
+    } else {
+        eID = m_reusableEntityIDs.back();
+        m_reusableEntityIDs.pop_back();
+    }
+    return eID;
+}
+
 ////////////////// retrieve component indexes ////////////////////
 
 size_t Scene::get_render_component(u64 eID) {
@@ -109,6 +120,7 @@ void Scene::system_render() {
     SDL_RenderPresent(m_renderer);
 }
 
+// TODO: make this not slow
 void Scene::system_move(float timeStep) {
     for (size_t i = 0; i < m_positionComponents.size(); i++) {
         u64 eID = m_positionComponents[i].eID;

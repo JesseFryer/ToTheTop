@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "../misc/settings.h"
+#include "../entities/entities.h"
 
 bool Game::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -38,10 +39,10 @@ bool Game::init() {
     m_running = true;
 
     // test out ecs
-    m_scene.add_render_component({0, {0, 0, 32, 32}});
-    m_scene.add_velocity_component({0, 50, 50});
-    m_scene.add_position_component({0, 0, 0});
-    m_scene.add_control_component({0});
+    create_player(&m_scene);
+    for (int i = 0; i < 1000; i++) {
+        create_moving_square(&m_scene);
+    }
 
     return true;
 }

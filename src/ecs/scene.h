@@ -17,17 +17,13 @@ class Scene {
         void add_velocity_component(VelocityComponent component);
         void add_position_component(PositionComponent component);
 
-        // retrieve components (eID must be known to have the component)
-        // use has_components to find this out before calling these
-        size_t get_render_component(u64 eID);
-        size_t get_control_component(u64 eID);
-        size_t get_velocity_component(u64 eID);
-        size_t get_position_component(u64 eID);
+        u64 get_new_eid();
 
     private:
         // house-keeping
         SDL_Renderer* m_renderer;
         InputState* m_input;
+        u64 m_entityCount;
         std::vector<u64> m_reusableEntityIDs;
 
         // quick lookups
@@ -40,6 +36,13 @@ class Scene {
         std::vector<ControlComponent> m_controlComponents;
         std::vector<VelocityComponent> m_velocityComponents;
         std::vector<PositionComponent> m_positionComponents;
+
+        // retrieve components (eID must be known to have the component)
+        // use has_components to find this out before calling these
+        size_t get_render_component(u64 eID);
+        size_t get_control_component(u64 eID);
+        size_t get_velocity_component(u64 eID);
+        size_t get_position_component(u64 eID);
 
         // systems
         void system_render();
