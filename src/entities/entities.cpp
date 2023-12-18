@@ -24,17 +24,13 @@ void create_player(Scene* scene) {
     control.eID = eID;
     scene->add_control_component(control);
 
-    VelocityComponent velocity;
-    velocity.eID = eID;
-    velocity.x = 0;
-    velocity.y = 0;
-    scene->add_velocity_component(velocity);
-
-    PositionComponent position;
-    position.eID = eID;
-    position.x = 0;
-    position.y = 0;
-    scene->add_position_component(position);
+    TransformComponent transform;
+    transform.eID = eID;
+    transform.x = 0;
+    transform.y = 0;
+    transform.xV = 0;
+    transform.yV = 0;
+    scene->add_transform_component(transform);
 }
 
 void create_moving_square(Scene* scene) {
@@ -49,17 +45,13 @@ void create_moving_square(Scene* scene) {
     render.rect.h = MOVING_SQUARE_H;
     scene->add_render_component(render);
 
-    VelocityComponent velocity;
-    velocity.eID = eID;
-    velocity.x = SQUARE_SPEED * cos(theta);
-    velocity.y = SQUARE_SPEED * sin(theta);
-    scene->add_velocity_component(velocity);
-
-    PositionComponent position;
-    position.eID = eID;
-    position.x = WIN_W * 0.5;
-    position.y = WIN_H * 0.5;
-    scene->add_position_component(position);
+    TransformComponent transform;
+    transform.eID = eID;
+    transform.x = WIN_W * 0.5; 
+    transform.y = WIN_H * 0.5;
+    transform.xV = SQUARE_SPEED * cos(theta);
+    transform.yV = SQUARE_SPEED * sin(theta);
+    scene->add_transform_component(transform);
 
     theta += 0.01;
 }

@@ -40,7 +40,7 @@ bool Game::init() {
 
     // test out ecs
     create_player(&m_scene);
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 100000; i++) {
         create_moving_square(&m_scene);
     }
 

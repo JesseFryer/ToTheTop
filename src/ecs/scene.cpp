@@ -41,17 +41,10 @@ void Scene::add_control_component(ControlComponent component) {
     }
 }
 
-void Scene::add_velocity_component(VelocityComponent component) {
-    if (!has_components(component.eID, CMP_VELOCITY)) {
-        add_components(component.eID, CMP_VELOCITY);
-        m_velocityComponents.push_back(component);
-    }
-}
-
-void Scene::add_position_component(PositionComponent component) {
-    if (!has_components(component.eID, CMP_POSITION)) {
-        add_components(component.eID, CMP_POSITION);
-        m_positionComponents.push_back(component);
+void Scene::add_transform_component(TransformComponent component) {
+    if (!has_components(component.eID, CMP_TRANSFORM)) {
+        add_components(component.eID, CMP_TRANSFORM);
+        m_transformComponents.push_back(component);
     }
 }
 
@@ -69,13 +62,21 @@ u64 Scene::get_new_eid() {
 ////////////////// retrieve component indexes ////////////////////
 
 size_t Scene::get_render_component(u64 eID) {
-    size_t index;
-    for (index = 0; index < m_renderComponents.size(); index++) {
-        if (m_renderComponents[index].eID == eID) {
-            break;
+    size_t left = 0;
+    size_t right = m_renderComponents.size() - 1;
+    size_t mid;
+    while (left <= right) {
+        mid = left + (right - left) * 0.5;
+        if (m_renderComponents[mid].eID == eID) {
+            return mid;
+        }
+        if (m_renderComponents[mid].eID < eID) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
         }
     }
-    return index;
+    return mid;
 }
 
 size_t Scene::get_control_component(u64 eID) {
@@ -88,24 +89,22 @@ size_t Scene::get_control_component(u64 eID) {
     return index;
 }
 
-size_t Scene::get_velocity_component(u64 eID) {
-    size_t index;
-    for (index = 0; index < m_velocityComponents.size(); index++) {
-        if (m_velocityComponents[index].eID == eID) {
-            break;
+size_t Scene::get_transform_component(u64 eID) {
+    size_t left = 0;
+    size_t right = m_transformComponents.size() - 1;
+    size_t mid;
+    while (left <= right) {
+        mid = left + (right - left) * 0.5;
+        if (m_transformComponents[mid].eID == eID) {
+            return mid;
+        }
+        if (m_transformComponents[mid].eID < eID) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
         }
     }
-    return index;
-}
-
-size_t Scene::get_position_component(u64 eID) {
-    size_t index;
-    for (index = 0; index < m_positionComponents.size(); index++) {
-        if (m_positionComponents[index].eID == eID) {
-            break;
-        }
-    }
-    return index;
+    return mid;
 }
 
 ///////////////////// systems //////////////////////////
@@ -120,20 +119,15 @@ void Scene::system_render() {
     SDL_RenderPresent(m_renderer);
 }
 
-// TODO: make this not slow
 void Scene::system_move(float timeStep) {
-    for (size_t i = 0; i < m_positionComponents.size(); i++) {
-        u64 eID = m_positionComponents[i].eID;
-        if (has_components(eID, CMP_VELOCITY)) {
-            int velIndex = get_velocity_component(eID);
-            VelocityComponent vel = m_velocityComponents[velIndex];
-            m_positionComponents.at(i).x += vel.x * timeStep;
-            m_positionComponents.at(i).y += vel.y * timeStep;
-        }
+    for (size_t i = 0; i < m_transformComponents.size(); i++) {
+        u64 eID = m_transformComponents.at(i).eID;
+        m_transformComponents.at(i).x += m_transformComponents.at(i).xV * timeStep;
+        m_transformComponents.at(i).y += m_transformComponents.at(i).yV * timeStep;
         if (has_components(eID, CMP_RENDER)) {
-            int renderIndex = get_render_component(eID);
-            m_renderComponents.at(renderIndex).rect.x = (int) m_positionComponents[i].x;
-            m_renderComponents.at(renderIndex).rect.y = (int) m_positionComponents[i].y;
+            size_t renderIndex = get_render_component(eID);
+            m_renderComponents.at(renderIndex).rect.x = (int) m_transformComponents.at(i).x;
+            m_renderComponents.at(renderIndex).rect.y = (int) m_transformComponents.at(i).y;
         }
     }
 }
@@ -141,22 +135,22 @@ void Scene::system_move(float timeStep) {
 void Scene::system_control() {
     for (ControlComponent component : m_controlComponents) {
         u64 eID = component.eID;
-        if (has_components(eID, CMP_VELOCITY)) {
-            int velIndex = get_velocity_component(eID);
-            m_velocityComponents.at(velIndex).x = 0;
-            m_velocityComponents.at(velIndex).y = 0;
+        if (has_components(eID, CMP_TRANSFORM)) {
+            size_t transIndex = get_transform_component(eID);
+            m_transformComponents.at(transIndex).xV = 0;
+            m_transformComponents.at(transIndex).yV = 0;
             const float speed = 400;
             if (m_input->key_pressed(K_W)) {
-                m_velocityComponents.at(velIndex).y = -speed;
+                m_transformComponents.at(transIndex).yV = -speed;
             }
             if (m_input->key_pressed(K_A)) {
-                m_velocityComponents.at(velIndex).x = -speed;
+                m_transformComponents.at(transIndex).xV = -speed;
             }
             if (m_input->key_pressed(K_S)) {
-                m_velocityComponents.at(velIndex).y = speed;
+                m_transformComponents.at(transIndex).yV = speed;
             }
             if (m_input->key_pressed(K_D)) {
-                m_velocityComponents.at(velIndex).x = speed;
+                m_transformComponents.at(transIndex).xV = speed;
             }
         }
     }

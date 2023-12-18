@@ -8,6 +8,7 @@ src="../../src/main.cpp\
      ../../src/input/input.cpp\
      ../../src/game/game.cpp\
      ../../src/ecs/scene.cpp\
+     ../../src/ecs/components.cpp\
      ../../src/entities/entities.cpp"
 
 mkdir $outdir

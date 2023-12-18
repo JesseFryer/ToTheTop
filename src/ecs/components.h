@@ -4,28 +4,25 @@
 #include "../misc/types.h"
 
 // bit-masks for m_activeComponent queries
-#define CMP_RENDER   0x00000001
-#define CMP_CONTROL  0x00000002
-#define CMP_VELOCITY 0x00000004 
-#define CMP_POSITION 0x00000008 
+#define CMP_RENDER    0x00000001
+#define CMP_CONTROL   0x00000002
+#define CMP_TRANSFORM 0x00000004 
 
-struct RenderComponent {
+struct Component {
     u64 eID;
+    bool operator<(const Component& other);
+};
+
+struct RenderComponent : Component {
     SDL_Rect rect;
 };
 
-struct ControlComponent {
-    u64 eID;
+struct ControlComponent : Component {
 };
 
-struct VelocityComponent {
-    u64 eID;
+struct TransformComponent : Component {
     float x;
     float y;
-};
-
-struct PositionComponent {
-    u64 eID;
-    float x;
-    float y;
+    float xV;
+    float yV;
 };
