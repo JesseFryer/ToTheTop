@@ -14,7 +14,6 @@ struct Component {
 };
 
 struct RenderComponent : Component {
-    SDL_Rect rect;
 };
 
 struct ControlComponent : Component {
@@ -25,4 +24,5 @@ struct TransformComponent : Component {
     float y;
     float xV;
     float yV;
+    SDL_Rect rect;
 };

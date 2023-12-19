@@ -113,7 +113,7 @@ void Scene::system_render() {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    for (RenderComponent component : m_renderComponents) {
+    for (TransformComponent component : m_transformComponents) {
         SDL_RenderFillRect(m_renderer, &component.rect);
     }
     SDL_RenderPresent(m_renderer);
@@ -121,14 +121,10 @@ void Scene::system_render() {
 
 void Scene::system_move(float timeStep) {
     for (size_t i = 0; i < m_transformComponents.size(); i++) {
-        u64 eID = m_transformComponents.at(i).eID;
         m_transformComponents.at(i).x += m_transformComponents.at(i).xV * timeStep;
         m_transformComponents.at(i).y += m_transformComponents.at(i).yV * timeStep;
-        if (has_components(eID, CMP_RENDER)) {
-            size_t renderIndex = get_render_component(eID);
-            m_renderComponents.at(renderIndex).rect.x = (int) m_transformComponents.at(i).x;
-            m_renderComponents.at(renderIndex).rect.y = (int) m_transformComponents.at(i).y;
-        }
+        m_transformComponents.at(i).rect.x = (int) m_transformComponents.at(i).x;
+        m_transformComponents.at(i).rect.y = (int) m_transformComponents.at(i).y;
     }
 }
 
