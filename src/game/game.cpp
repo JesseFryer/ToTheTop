@@ -32,8 +32,7 @@ bool Game::init() {
     }
 
     m_input.init();
-    m_scene.set_renderer(m_renderer);
-    m_scene.set_input(&m_input);
+    m_scene.init(m_renderer, &m_input);
     memset(&m_stats, 0, sizeof(DevStats));
     m_lastTime = SDL_GetTicks();
     m_running = true;
@@ -65,7 +64,7 @@ void Game::run() {
 }
 
 void Game::update_render(float timeStep) {
-    m_scene.update(timeStep);
+    m_scene.update_render(timeStep);
 }
 
 u32 Game::limit_frame_time() {

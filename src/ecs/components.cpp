@@ -1,5 +1,5 @@
 #include "components.h"
 
-bool Component::operator<(const Component& other) {
+bool Entity::operator<(const Entity& other) {
     return eID < other.eID;
 }

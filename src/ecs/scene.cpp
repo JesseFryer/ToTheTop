@@ -1,153 +1,128 @@
 #include "scene.h"
+#include "../misc/settings.h"
 #include <iostream>
 
-void Scene::set_renderer(SDL_Renderer* renderer) {
+void Scene::init(SDL_Renderer* renderer, InputState* input) {
     m_renderer = renderer;
-}
-
-void Scene::set_input(InputState* input) {
     m_input = input;
 }
 
-void Scene::update(float timeStep) {
-    system_control();
-    system_move(timeStep);
-    system_render();
-}
-
-////////////////// bit mask stuff for lookups /////////////////////
-
-bool Scene::has_components(u64 eID, u32 componentsMask) {
-    return (bool) (m_activeComponents[eID] & componentsMask);
-}
-
-void Scene::add_components(u64 eID, u32 componentsMask) {
-    m_activeComponents[eID] |= componentsMask;
-}
-
-//////////////////////// add components ///////////////////////////
-
-void Scene::add_render_component(RenderComponent component) {
-    if (!has_components(component.eID, CMP_RENDER)) {
-        add_components(component.eID, CMP_RENDER);
-        m_renderComponents.push_back(component);
-    }
-}
-
-void Scene::add_control_component(ControlComponent component) {
-    if (!has_components(component.eID, CMP_CONTROL)) {
-        add_components(component.eID, CMP_CONTROL);
-        m_controlComponents.push_back(component);
-    }
-}
-
-void Scene::add_transform_component(TransformComponent component) {
-    if (!has_components(component.eID, CMP_TRANSFORM)) {
-        add_components(component.eID, CMP_TRANSFORM);
-        m_transformComponents.push_back(component);
-    }
-}
-
-u64 Scene::get_new_eid() {
-    u64 eID;
-    if (m_reusableEntityIDs.empty()) {
-        eID = m_entityCount++;
-    } else {
-        eID = m_reusableEntityIDs.back();
-        m_reusableEntityIDs.pop_back();
-    }
-    return eID;
-}
-
-////////////////// retrieve component indexes ////////////////////
-
-size_t Scene::get_render_component(u64 eID) {
-    size_t left = 0;
-    size_t right = m_renderComponents.size() - 1;
-    size_t mid;
-    while (left <= right) {
-        mid = left + (right - left) * 0.5;
-        if (m_renderComponents[mid].eID == eID) {
-            return mid;
-        }
-        if (m_renderComponents[mid].eID < eID) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-    return mid;
-}
-
-size_t Scene::get_control_component(u64 eID) {
-    size_t index;
-    for (index = 0; index < m_controlComponents.size(); index++) {
-        if (m_controlComponents[index].eID == eID) {
-            break;
-        }
-    }
-    return index;
-}
-
-size_t Scene::get_transform_component(u64 eID) {
-    size_t left = 0;
-    size_t right = m_transformComponents.size() - 1;
-    size_t mid;
-    while (left <= right) {
-        mid = left + (right - left) * 0.5;
-        if (m_transformComponents[mid].eID == eID) {
-            return mid;
-        }
-        if (m_transformComponents[mid].eID < eID) {
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-    return mid;
-}
-
-///////////////////// systems //////////////////////////
-
-void Scene::system_render() {
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+void Scene::update_render(float timeStep) {
+    SDL_SetRenderDrawColor(m_renderer,
+            255, 255, 255, 255);
     SDL_RenderClear(m_renderer);
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-    for (TransformComponent component : m_transformComponents) {
-        SDL_RenderFillRect(m_renderer, &component.rect);
+    SDL_SetRenderDrawColor(m_renderer,
+            0, 0, 0, 255);
+    for (u64 eID = 0; eID < m_entities.size(); eID++) {
+        Entity& entity = m_entities.at(eID);
+        u32 activeComponents = entity.activeComponents;
+
+        if ((activeComponents & SYS_CONTROL) == SYS_CONTROL) {
+            control_entity(entity);
+        }
+
+        if ((activeComponents & SYS_MOVE) == SYS_MOVE) {
+            move_entity(entity, timeStep);
+            if (activeComponents & CMP_RENDER) {
+                update_entity_rect_pos(entity);
+            }
+        }
+
+        if (activeComponents & CMP_RENDER) {
+            render_entity(entity);
+        }
     }
     SDL_RenderPresent(m_renderer);
 }
 
-void Scene::system_move(float timeStep) {
-    for (size_t i = 0; i < m_transformComponents.size(); i++) {
-        m_transformComponents.at(i).x += m_transformComponents.at(i).xV * timeStep;
-        m_transformComponents.at(i).y += m_transformComponents.at(i).yV * timeStep;
-        m_transformComponents.at(i).rect.x = (int) m_transformComponents.at(i).x;
-        m_transformComponents.at(i).rect.y = (int) m_transformComponents.at(i).y;
+u64 Scene::add_entity() {
+    u64 eID;
+    if (m_reusableEntityIDs.size()) {
+        eID = m_reusableEntityIDs.front();
+        m_reusableEntityIDs.pop();
+    } else {
+        eID = m_entities.size();
+    }
+    Entity entity;
+    memset(&entity, 0, sizeof(Entity));
+    entity.eID = eID;
+    m_entities.push_back(entity);
+    return eID;
+}
+
+void Scene::remove_entity(u64 eID) {
+    memset(&(m_entities.data()[eID]), 0, sizeof(Entity));
+    m_reusableEntityIDs.push(eID);
+}
+
+
+//////////////////////// set components ///////////////////////////
+
+void Scene::activate_components(u64 eID, u32 componentsMask) {
+    m_entities.at(eID).activeComponents |= componentsMask;
+}
+
+void Scene::set_position_data(u64 eID, PositionComponent& component) {
+    m_entities.at(eID).position = component;
+}
+
+void Scene::set_velocity_data(u64 eID, VelocityComponent& component) {
+    m_entities.at(eID).velocity = component;
+}
+
+void Scene::set_render_data(u64 eID, RenderComponent& component) {
+    m_entities.at(eID).render = component;
+}
+
+void Scene::set_control_data(u64 eID, ControlComponent& component) {
+    m_entities.at(eID).control = component;
+}
+
+////////////////////////// systems ////////////////////////////////
+
+void Scene::render_entity(Entity& entity) {
+    SDL_RenderFillRect(m_renderer, &entity.render.rect);
+}
+
+void Scene::move_entity(Entity& entity, float timeStep) {
+    entity.position.x += timeStep * entity.velocity.xV;
+    entity.position.y += timeStep * entity.velocity.yV;
+    if (entity.position.x > WIN_W) {
+        entity.position.x = WIN_W;
+        entity.velocity.xV *= -1;
+    } else if (entity.position.x < 0) {
+        entity.position.x = 0;
+        entity.velocity.xV *= -1;
+    }
+    if (entity.position.y > WIN_H) {
+        entity.position.y = WIN_H;
+        entity.velocity.yV *= -1;
+    } else if (entity.position.y < 0) {
+        entity.position.y = 0;
+        entity.velocity.yV *= -1;
+    }
+
+}
+
+void Scene::control_entity(Entity& entity) {
+    const float speed = 400;
+    entity.velocity.xV = 0;
+    entity.velocity.yV = 0;
+    if (m_input->key_pressed(K_W)) {
+        entity.velocity.yV = -speed;
+    }
+    if (m_input->key_pressed(K_A)) {
+        entity.velocity.xV = -speed;
+    }
+    if (m_input->key_pressed(K_S)) {
+        entity.velocity.yV = speed;
+    }
+    if (m_input->key_pressed(K_D)) {
+        entity.velocity.xV = speed;
     }
 }
 
-void Scene::system_control() {
-    for (ControlComponent component : m_controlComponents) {
-        u64 eID = component.eID;
-        if (has_components(eID, CMP_TRANSFORM)) {
-            size_t transIndex = get_transform_component(eID);
-            m_transformComponents.at(transIndex).xV = 0;
-            m_transformComponents.at(transIndex).yV = 0;
-            const float speed = 400;
-            if (m_input->key_pressed(K_W)) {
-                m_transformComponents.at(transIndex).yV = -speed;
-            }
-            if (m_input->key_pressed(K_A)) {
-                m_transformComponents.at(transIndex).xV = -speed;
-            }
-            if (m_input->key_pressed(K_S)) {
-                m_transformComponents.at(transIndex).yV = speed;
-            }
-            if (m_input->key_pressed(K_D)) {
-                m_transformComponents.at(transIndex).xV = speed;
-            }
-        }
-    }
+void Scene::update_entity_rect_pos(Entity& entity) {
+    entity.render.rect.x = entity.position.x;
+    entity.render.rect.y = entity.position.y;
 }

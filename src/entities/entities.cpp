@@ -10,36 +10,42 @@
 
 
 void create_player(Scene* scene) {
-    u64 eID = scene->get_new_eid();
+    u64 eID = scene->add_entity();
 
-    ControlComponent control;
-    control.eID = eID;
-    scene->add_control_component(control);
+    PositionComponent position;
+    RenderComponent render;
 
-    TransformComponent transform;
-    transform.eID = eID;
-    transform.x = 0;
-    transform.y = 0;
-    transform.xV = 0;
-    transform.yV = 0;
-    transform.rect.w = PLAYER_W;
-    transform.rect.h = PLAYER_H;
-    scene->add_transform_component(transform);
+    position.x = WIN_W * 0.5;
+    position.y = WIN_H * 0.5;
+    render.rect.w = PLAYER_W;
+    render.rect.h = PLAYER_H;
+
+    scene->set_render_data(eID, render);
+    scene->set_position_data(eID, position);
+    scene->activate_components(eID, CMP_ALL);
 }
 
 void create_moving_square(Scene* scene) {
     static float theta = 0;
-    u64 eID = scene->get_new_eid();
+    u64 eID = scene->add_entity();
 
-    TransformComponent transform;
-    transform.eID = eID;
-    transform.x = WIN_W * 0.5; 
-    transform.y = WIN_H * 0.5;
-    transform.xV = SQUARE_SPEED * cos(theta);
-    transform.yV = SQUARE_SPEED * sin(theta);
-    transform.rect.w = MOVING_SQUARE_W;
-    transform.rect.h = MOVING_SQUARE_H;
-    scene->add_transform_component(transform);
+    PositionComponent position;
+    VelocityComponent velocity;
+    RenderComponent   render;
+
+    position.x = WIN_W * 0.5;
+    position.y = WIN_H * 0.5;
+    velocity.xV = SQUARE_SPEED * cos(theta);
+    velocity.yV = SQUARE_SPEED * sin(theta);
+    render.rect.w = MOVING_SQUARE_W;
+    render.rect.h = MOVING_SQUARE_H;
+
+    scene->set_position_data(eID, position);
+    scene->set_velocity_data(eID, velocity);
+    scene->set_render_data(eID, render);
+
+    scene->activate_components(eID, 
+            CMP_POSITION | CMP_VELOCITY | CMP_RENDER);
 
     theta += 0.01;
 }
