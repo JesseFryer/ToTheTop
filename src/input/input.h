@@ -18,7 +18,7 @@
 typedef unsigned long t_keystate;
 typedef unsigned long t_key;
 
-typedef struct MouseState {
+struct MouseState {
     bool leftClick;
     bool rightClick;
     int  xpos;
@@ -26,20 +26,11 @@ typedef struct MouseState {
     int  xmove;
     int  ymove;
     int  scroll;
-} MouseState;
+};
 
 class InputState {
-    private:
-        t_keystate m_keyState;
-        MouseState m_mouseState;
-
-    private:
-        void update_keys(SDL_Event* keyEvent);
-        void update_mouse_motion(SDL_Event* mouseMotionEvent);
-        void update_mouse_button(SDL_Event* mouseButtonEvent);
-
     public:
-        void init();                 // zero out some state (must do)
+        InputState();
         void update();               // empties the SDL event queue
 
         // Keyboard
@@ -50,4 +41,13 @@ class InputState {
         bool right_click();          // returns true if right click is pressed
         int  get_mouse_x();          // returns mouse x position
         int  get_mouse_y();          // returns mouse y position
+
+    private:
+        t_keystate m_keyState;
+        MouseState m_mouseState;
+
+        void update_keys(SDL_Event* keyEvent);
+        void update_mouse_motion(SDL_Event* mouseMotionEvent);
+        void update_mouse_button(SDL_Event* mouseButtonEvent);
+
 };

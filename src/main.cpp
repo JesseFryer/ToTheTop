@@ -1,10 +1,10 @@
-#include "game/game.h"
+#include "app/app.h"
 
 int main() {
-    Game game;
-    if (game.init()) {
-        game.run();
-        game.quit();
+    App app;
+    if (app.init()) {
+        app.run();
+        app.quit();
     } else {
         return 1;
     }

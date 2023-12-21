@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cstring>
+#include <SDL2/SDL.h>
 
-#include "game.h"
+#include "app.h"
 #include "../misc/settings.h"
 #include "../entities/entities.h"
+#include "../game/systems.h"
 
-bool Game::init() {
+bool App::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Failed to initialize the SDL2 library\n";
         return false;
@@ -31,22 +33,20 @@ bool Game::init() {
         return false;
     }
 
-    m_input.init();
-    m_scene.init(m_renderer, &m_input);
     memset(&m_stats, 0, sizeof(DevStats));
     m_lastTime = SDL_GetTicks();
     m_running = true;
 
     // test out ecs
     create_player(&m_scene);
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 20000; i++) {
         create_moving_square(&m_scene);
     }
 
     return true;
 }
 
-void Game::run() {
+void App::run() {
     while (m_running) {
         m_input.update();
         if (m_input.key_pressed(K_QUIT)) {
@@ -60,16 +60,42 @@ void Game::run() {
 #if DEV_STATS
         dev_record_frame();
 #endif
+
     }
 }
 
-void Game::update_render(float timeStep) {
-    m_scene.update_render(timeStep);
+void App::update_render(float timeStep) {
+
+    SDL_SetRenderDrawColor(m_renderer,
+            255, 255, 255, 255);
+    SDL_RenderClear(m_renderer);
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+
+    for (u64 eID = 0; eID < m_scene.m_entities.size(); eID++) {
+
+        Entity& entity = m_scene.m_entities.at(eID);
+        u32 activeComponents = entity.activeComponents;
+
+        if ((activeComponents & SYS_CONTROL) == SYS_CONTROL) {
+            // causes seg fault not sure why
+            //entity.control.control(entity, &m_input);
+        }
+
+        if ((activeComponents & SYS_MOVE) == SYS_MOVE) {
+            move_entity(entity, timeStep);
+            if (activeComponents & CMP_RENDER) {
+                update_entity_rect_pos(entity);
+            }
+        }
+
+        if (activeComponents & CMP_RENDER) {
+            render_entity(entity, m_renderer);
+        }
+    }
+    SDL_RenderPresent(m_renderer);
 }
 
-u32 Game::limit_frame_time() {
-    // wait if we were faster than the required frame time 
-    // and add the difference to our deltaTime
+u32 App::limit_frame_time() {
     u32 currentTime = SDL_GetTicks(); // time in milliseconds
     u32 deltaTime = currentTime - m_lastTime;
     if (deltaTime < FRAME_TIME) {
@@ -77,15 +103,14 @@ u32 Game::limit_frame_time() {
         SDL_Delay(diff);
         deltaTime += diff;
     } else if (deltaTime > MAX_FRAME_TIME) {
-        // cap deltaTime to avoid physics glitches
-        // simulation will slow down as a result
+        // cap deltaTime to avoid physics glitches (slows simulation)
         deltaTime = MAX_FRAME_TIME;
     }
     m_lastTime = SDL_GetTicks();
     return deltaTime;
 }
 
-void Game::dev_record_frame() {
+void App::dev_record_frame() {
     u32 currentTime = SDL_GetTicks();
     u32 frameTime = currentTime - m_stats.lastTime;
     m_stats.lastTime = currentTime;
@@ -98,7 +123,7 @@ void Game::dev_record_frame() {
     }
 }
 
-void Game::quit() {
+void App::quit() {
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();

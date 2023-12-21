@@ -3,9 +3,9 @@
 #include <iostream>
 #include <cstring>
 
-void InputState::init() {
+InputState::InputState() {
     m_keyState = 0;
-    m_mouseState = {};
+    memset(&m_mouseState, 0, sizeof(MouseState));
 }
 
 void InputState::update() {
