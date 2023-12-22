@@ -77,8 +77,7 @@ void App::update_render(float timeStep) {
         u32 activeComponents = entity.activeComponents;
 
         if ((activeComponents & SYS_CONTROL) == SYS_CONTROL) {
-            // causes seg fault not sure why
-            //entity.control.control(entity, &m_input);
+            entity.control.control_func(entity, &m_input);
         }
 
         if ((activeComponents & SYS_MOVE) == SYS_MOVE) {

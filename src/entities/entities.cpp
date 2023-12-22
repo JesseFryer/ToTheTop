@@ -20,7 +20,7 @@ void create_player(Scene* scene) {
     position.y = WIN_H * 0.5;
     render.rect.w = PLAYER_W;
     render.rect.h = PLAYER_H;
-    control.control = control_player;
+    control.control_func = control_player;
 
     scene->set_render_data(eID, render);
     scene->set_position_data(eID, position);

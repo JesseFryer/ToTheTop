@@ -7,7 +7,8 @@ u64 Scene::add_entity() {
     if (m_reusableEntityIDs.size()) {
         eID = m_reusableEntityIDs.front();
         m_reusableEntityIDs.pop();
-        m_entities.at(eID) = {};
+        memset(&m_entities.at(eID), 0, sizeof(Entity));
+        //m_entities.at(eID) = {};
     } else {
         eID = m_entities.size();
         Entity entity;

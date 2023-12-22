@@ -25,7 +25,22 @@ void move_entity(Entity& entity, float timeStep) {
 
 }
 
-void control_player(Entity& entity, InputState* input) {
+void control_player(Entity& self, InputState* input) { 
+    self.velocity.xV = 0.0f;
+    self.velocity.yV = 0.0f;
+    if (input->key_pressed(K_W)) {
+        self.velocity.yV = -PLAYER_SPEED;
+    }
+    if (input->key_pressed(K_A)) {
+        self.velocity.xV = -PLAYER_SPEED;
+    }
+    if (input->key_pressed(K_S)) {
+        self.velocity.yV = PLAYER_SPEED;
+    }
+    if (input->key_pressed(K_D)) {
+        self.velocity.xV = PLAYER_SPEED;
+    }
+
 }
 
 void update_entity_rect_pos(Entity& entity) {

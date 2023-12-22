@@ -17,25 +17,33 @@
 
 struct Entity;
 
-typedef void (*control_func)(Entity&, InputState*);
+typedef void (*ControlFunc)(Entity&, InputState*);
 
 struct PositionComponent {
-    float x = 0;
-    float y = 0;
+    float x;
+    float y;
+
+    PositionComponent();
 };
 
 struct VelocityComponent {
-    float xV = 0;
-    float yV = 0;
+    float xV;
+    float yV;
+
+    VelocityComponent();
 };
 
 struct RenderComponent {
-    SDL_Rect rect = {};
-    SDL_Texture* texture = nullptr;
+    SDL_Rect rect;
+    SDL_Texture* texture;
+
+    RenderComponent();
 };
 
 struct ControlComponent {
-    control_func control = nullptr;
+    ControlFunc control_func;
+
+    ControlComponent();
 };
 
 struct Entity {
@@ -49,5 +57,6 @@ struct Entity {
     RenderComponent   render;
     ControlComponent  control;
 
+    Entity();
     bool operator<(const Entity& other);
 };
