@@ -14,10 +14,12 @@ class App {
 
     private:
         bool          m_running;
+
         SDL_Window*   m_window;
         SDL_Renderer* m_renderer;
         InputState    m_input;
         Scene         m_scene;
+
         u32           m_lastTime;
         DevStats      m_stats;
 

@@ -2,7 +2,15 @@
 #include "../misc/settings.h"
 
 void render_entity(Entity& entity, SDL_Renderer* renderer) {
-    SDL_RenderFillRect(renderer, &entity.render.rect);
+    if (entity.render.texture) {
+        SDL_RenderCopy(
+                renderer, 
+                entity.render.texture, 
+                NULL, 
+                &entity.render.rect);
+    } else {
+        SDL_RenderFillRect(renderer, &entity.render.rect);
+    }
 }
 
 void move_entity(Entity& entity, float timeStep) {

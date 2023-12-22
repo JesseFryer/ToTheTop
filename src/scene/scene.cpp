@@ -41,6 +41,6 @@ void Scene::set_render_data(u64 eID, RenderComponent& component) {
     m_entities.at(eID).render = component;
 }
 
-void Scene::set_control_func(u64 eID, ControlComponent& component) {
-    m_entities.at(eID).control = component;
+void Scene::set_control_func(u64 eID, ControlFunc controlFunc) {
+    m_entities.at(eID).control.control_func = controlFunc;
 }

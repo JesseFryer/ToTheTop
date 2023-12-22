@@ -23,6 +23,6 @@ struct Scene {
     void set_position_data(u64 eID, PositionComponent& component);
     void set_velocity_data(u64 eID, VelocityComponent& component);
     void set_render_data(u64 eID, RenderComponent& component);
-    void set_control_func(u64 eID, ControlComponent& component);
+    void set_control_func(u64 eID, ControlFunc controlFunc);
 };
 

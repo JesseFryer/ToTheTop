@@ -8,7 +8,7 @@
 #include "../game/systems.h"
 
 bool App::init() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         std::cout << "Failed to initialize the SDL2 library\n";
         return false;
     }
@@ -38,8 +38,8 @@ bool App::init() {
     m_running = true;
 
     // test out ecs
-    create_player(&m_scene);
-    for (int i = 0; i < 20000; i++) {
+    create_player(m_renderer, &m_scene);
+    for (int i = 0; i < 1000; i++) {
         create_moving_square(&m_scene);
     }
 
@@ -49,7 +49,7 @@ bool App::init() {
 void App::run() {
     while (m_running) {
         m_input.update();
-        if (m_input.key_pressed(K_QUIT)) {
+        if (m_input.key_pressed(K_QUIT | K_ESC)) {
             m_running = false;
         }
 
@@ -72,25 +72,28 @@ void App::update_render(float timeStep) {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
     for (u64 eID = 0; eID < m_scene.m_entities.size(); eID++) {
-
         Entity& entity = m_scene.m_entities.at(eID);
-        u32 activeComponents = entity.activeComponents;
+        u32 activeComps = entity.activeComponents;
 
-        if ((activeComponents & SYS_CONTROL) == SYS_CONTROL) {
+        if (is_active(activeComps, SYS_CONTROL)) {
             entity.control.control_func(entity, &m_input);
         }
 
-        if ((activeComponents & SYS_MOVE) == SYS_MOVE) {
+        if (is_active(activeComps, SYS_MOVE)) {
             move_entity(entity, timeStep);
-            if (activeComponents & CMP_RENDER) {
+
+            if (is_active(activeComps, CMP_RENDER)) {
                 update_entity_rect_pos(entity);
             }
+
         }
 
-        if (activeComponents & CMP_RENDER) {
+        if (is_active(activeComps, CMP_RENDER)) {
             render_entity(entity, m_renderer);
         }
+
     }
+
     SDL_RenderPresent(m_renderer);
 }
 

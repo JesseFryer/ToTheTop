@@ -1,6 +1,6 @@
 
 progname="ToTheTop"
-linkflags="-lSDL2"
+linkflags="-lSDL2 -lSDL2_image"
 compflags="-Wall -Wextra -pedantic -std=c++11"
 
 outdir="../../out/"

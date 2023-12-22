@@ -1,5 +1,9 @@
 #include "components.h"
 
+bool is_active(u32 activeComps, u32 checkComps) {
+    return ((activeComps & checkComps) == checkComps);
+}
+
 PositionComponent::PositionComponent() {
     x = 0.0f;
     y = 0.0f;
@@ -15,6 +19,10 @@ RenderComponent::RenderComponent() {
     rect.y = 0;
     rect.w = 0;
     rect.h = 0;
+    textureRect.x = 0;
+    textureRect.y = 0;
+    textureRect.w = 0;
+    textureRect.h = 0;
     texture = nullptr;
 }
 

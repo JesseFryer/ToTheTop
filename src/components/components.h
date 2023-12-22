@@ -15,9 +15,13 @@
 #define SYS_CONTROL (CMP_CONTROL | CMP_VELOCITY)
 #define SYS_MOVE    (CMP_POSITION | CMP_VELOCITY)
 
+// check if an entity has checkComps components active 
+// activeComps is the entity's active components
+// checkComps is the components to check
+bool is_active(u32 activeComps, u32 checkComps);
+
 struct Entity;
 
-typedef void (*ControlFunc)(Entity&, InputState*);
 
 struct PositionComponent {
     float x;
@@ -35,11 +39,18 @@ struct VelocityComponent {
 
 struct RenderComponent {
     SDL_Rect rect;
-    SDL_Texture* texture;
+    SDL_Rect textureRect; // portion of the texture
+    SDL_Texture* texture; // the texture (spritesheet)
 
     RenderComponent();
 };
 
+struct AnimationComponent {
+    // TODO: will be like a counter and increment speed
+    // and whatnot, also index into array of rects
+};
+
+typedef void (*ControlFunc)(Entity&, InputState*);
 struct ControlComponent {
     ControlFunc control_func;
 

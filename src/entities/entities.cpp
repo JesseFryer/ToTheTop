@@ -1,15 +1,24 @@
 #include "entities.h"
 #include "../misc/settings.h"
 #include "../game/systems.h"
+#include <SDL2/SDL_image.h>
 
 #define PLAYER_W 32
 #define PLAYER_H 32
 
 #define MOVING_SQUARE_W 16
 #define MOVING_SQUARE_H 16
-#define SQUARE_SPEED 200
+#define SQUARE_SPEED 600
 
-void create_player(Scene* scene) {
+SDL_Texture* load_texture(SDL_Renderer* renderer, const char* path) {
+    SDL_Texture* tex;
+    SDL_Surface* tmp = IMG_Load(path);
+    tex = SDL_CreateTextureFromSurface(renderer, tmp);
+    SDL_FreeSurface(tmp);
+    return tex;
+}
+
+void create_player(SDL_Renderer* renderer, Scene* scene) {
     u64 eID = scene->add_entity();
 
     PositionComponent position;
@@ -20,11 +29,11 @@ void create_player(Scene* scene) {
     position.y = WIN_H * 0.5;
     render.rect.w = PLAYER_W;
     render.rect.h = PLAYER_H;
-    control.control_func = control_player;
+    render.texture = load_texture(renderer, "../../res/player.png");
 
     scene->set_render_data(eID, render);
     scene->set_position_data(eID, position);
-    scene->set_control_func(eID, control);
+    scene->set_control_func(eID, control_player);
     scene->activate_components(eID, CMP_ALL);
 }
 
