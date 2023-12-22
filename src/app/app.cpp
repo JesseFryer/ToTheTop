@@ -24,6 +24,8 @@ bool App::init() {
         return false;
     }
 
+    SDL_SetWindowResizable(m_window, SDL_TRUE);
+
     m_renderer = SDL_CreateRenderer(
             m_window,
             0,
@@ -34,22 +36,23 @@ bool App::init() {
     }
 
     memset(&m_stats, 0, sizeof(DevStats));
-    m_lastTime = SDL_GetTicks();
-    m_running = true;
+    load_sprites();
 
     // test out ecs
-    create_player(m_renderer, &m_scene);
-    for (int i = 0; i < 1000; i++) {
-        create_moving_square(&m_scene);
+    create_player(m_sprites.get_sprite(SPR_PLAYER), &m_scene);
+    for (int i = 0; i < 10000; i++) {
+        create_moving_square(m_sprites.get_sprite(SPR_SLIME), &m_scene);
     }
 
+    m_lastTime = SDL_GetTicks();
+    m_running = true;
     return true;
 }
 
 void App::run() {
     while (m_running) {
         m_input.update();
-        if (m_input.key_pressed(K_QUIT | K_ESC)) {
+        if (m_input.key_pressed(K_QUIT)) {
             m_running = false;
         }
 
@@ -129,4 +132,9 @@ void App::quit() {
     SDL_DestroyRenderer(m_renderer);
     SDL_DestroyWindow(m_window);
     SDL_Quit();
+}
+
+void App::load_sprites() {
+    m_sprites.add_sprite("../../res/player.png", m_renderer);
+    m_sprites.add_sprite("../../res/slime.png", m_renderer);
 }

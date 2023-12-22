@@ -13,6 +13,7 @@
 //   - call activate_components (macros can be found in components.h).
 
 struct Scene {
+    //TODO: possibly make this a static sized array
     std::vector<Entity> m_entities;
     std::queue<u64>     m_reusableEntityIDs;
 
