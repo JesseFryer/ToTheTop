@@ -37,12 +37,7 @@ bool App::init() {
 
     memset(&m_stats, 0, sizeof(DevStats));
     load_sprites();
-
-    // test out ecs
-    create_player(m_sprites.get_sprite(SPR_PLAYER), &m_scene);
-    for (int i = 0; i < 10000; i++) {
-        create_moving_square(m_sprites.get_sprite(SPR_SLIME), &m_scene);
-    }
+    create_entities();
 
     m_lastTime = SDL_GetTicks();
     m_running = true;
@@ -79,7 +74,11 @@ void App::update_render(float timeStep) {
         u32 activeComps = entity.activeComponents;
 
         if (is_active(activeComps, SYS_CONTROL)) {
-            entity.control.control_func(entity, &m_input);
+            entity.control.control_func(entity, &m_input, timeStep);
+        }
+
+        if (is_active(activeComps, SYS_GRAVITY)) {
+            apply_gravity(entity, timeStep);
         }
 
         if (is_active(activeComps, SYS_MOVE)) {
@@ -137,4 +136,9 @@ void App::quit() {
 void App::load_sprites() {
     m_sprites.add_sprite("../../res/player.png", m_renderer);
     m_sprites.add_sprite("../../res/slime.png", m_renderer);
+}
+
+void App::create_entities() {
+    create_player1(m_sprites.get_sprite(SPR_PLAYER), &m_scene);
+    create_player2(m_sprites.get_sprite(SPR_PLAYER), &m_scene);
 }

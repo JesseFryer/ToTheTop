@@ -41,6 +41,10 @@ void Scene::set_render_data(u64 eID, RenderComponent& component) {
     m_entities.at(eID).render = component;
 }
 
+void Scene::set_gravity_data(u64 eID, GravityComponent& component) {
+    m_entities.at(eID).gravity = component;
+}
+
 void Scene::set_control_func(u64 eID, ControlFunc controlFunc) {
     m_entities.at(eID).control.control_func = controlFunc;
 }

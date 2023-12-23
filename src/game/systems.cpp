@@ -16,28 +16,27 @@ void render_entity(Entity& entity, SDL_Renderer* renderer) {
 void move_entity(Entity& entity, float timeStep) {
     entity.position.x += timeStep * entity.velocity.xV;
     entity.position.y += timeStep * entity.velocity.yV;
-    if (entity.position.x > WIN_W) {
-        entity.position.x = WIN_W;
-        entity.velocity.xV *= -1;
-    } else if (entity.position.x < 0) {
-        entity.position.x = 0;
-        entity.velocity.xV *= -1;
+    if (entity.position.y >= WIN_H - 64) {
+        entity.position.y = WIN_H - 64;
     }
-    if (entity.position.y > WIN_H) {
-        entity.position.y = WIN_H;
-        entity.velocity.yV *= -1;
-    } else if (entity.position.y < 0) {
-        entity.position.y = 0;
-        entity.velocity.yV *= -1;
-    }
-
 }
 
-void control_player(Entity& self, InputState* input) { 
+void apply_gravity(Entity& entity, float timeStep) {
+    entity.velocity.yV += GRAVITY * entity.gravity.strength * timeStep;
+}
+
+void control_player1(Entity& self, InputState* input, float timeStep) { 
     self.velocity.xV = 0.0f;
-    self.velocity.yV = 0.0f;
-    if (input->key_pressed(K_W)) {
-        self.velocity.yV = -PLAYER_SPEED;
+
+    static float jumpAccumulator = JUMP_TIMER;
+    jumpAccumulator -= timeStep;
+    if (jumpAccumulator <= 0.0f) {
+        jumpAccumulator = 0.0f;
+    }
+
+    if (input->key_pressed(K_W) && !jumpAccumulator) {
+        jumpAccumulator = JUMP_TIMER;
+        self.velocity.yV = -PLAYER_JUMP_STR;
     }
     if (input->key_pressed(K_A)) {
         self.velocity.xV = -PLAYER_SPEED;
@@ -49,6 +48,30 @@ void control_player(Entity& self, InputState* input) {
         self.velocity.xV = PLAYER_SPEED;
     }
 
+}
+
+void control_player2(Entity& self, InputState* input, float timeStep) { 
+    self.velocity.xV = 0.0f;
+
+    static float jumpAccumulator = JUMP_TIMER;
+    jumpAccumulator -= timeStep;
+    if (jumpAccumulator <= 0.0f) {
+        jumpAccumulator = 0.0f;
+    }
+
+    if (input->key_pressed(K_UP) && !jumpAccumulator) {
+        jumpAccumulator = JUMP_TIMER;
+        self.velocity.yV = -PLAYER_JUMP_STR;
+    }
+    if (input->key_pressed(K_LEFT)) {
+        self.velocity.xV = -PLAYER_SPEED;
+    }
+    if (input->key_pressed(K_DOWN)) {
+        self.velocity.yV = PLAYER_SPEED;
+    }
+    if (input->key_pressed(K_RIGHT)) {
+        self.velocity.xV = PLAYER_SPEED;
+    }
 }
 
 void update_entity_rect_pos(Entity& entity) {

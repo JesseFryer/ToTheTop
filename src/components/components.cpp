@@ -14,6 +14,10 @@ VelocityComponent::VelocityComponent() {
     yV = 0.0f;
 }
 
+GravityComponent::GravityComponent() {
+    strength = 1.0f;
+}
+
 RenderComponent::RenderComponent() {
     rect.x = 0;
     rect.y = 0;

@@ -80,6 +80,34 @@ void InputState::update_keys(SDL_Event* keyEvent) {
                 m_keyState &= K_D_OFF;
             }
             break;
+        case SDLK_UP: 
+            if (type == SDL_KEYDOWN) {
+                m_keyState |= K_UP;
+            } else {
+                m_keyState &= K_UP_OFF;
+            }
+            break;
+        case SDLK_LEFT: 
+            if (type == SDL_KEYDOWN) {
+                m_keyState |= K_LEFT;
+            } else {
+                m_keyState &= K_LEFT_OFF;
+            }
+            break;
+        case SDLK_DOWN: 
+            if (type == SDL_KEYDOWN) {
+                m_keyState |= K_DOWN;
+            } else {
+                m_keyState &= K_DOWN_OFF;
+            }
+            break;
+        case SDLK_RIGHT: 
+            if (type == SDL_KEYDOWN) {
+                m_keyState |= K_RIGHT;
+            } else {
+                m_keyState &= K_RIGHT_OFF;
+            }
+            break;
     }
 }
 

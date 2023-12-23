@@ -3,29 +3,47 @@
 #include "../game/systems.h"
 #include <SDL2/SDL_image.h>
 
-#define PLAYER_W 128
-#define PLAYER_H 128
-
-#define MOVING_SQUARE_W 16
-#define MOVING_SQUARE_H 16
-#define SQUARE_SPEED 600
-
-void create_player(SDL_Texture* tex, Scene* scene) {
+void create_player1(SDL_Texture* tex, Scene* scene) {
     u64 eID = scene->add_entity();
 
     PositionComponent position;
     RenderComponent   render;
     ControlComponent  control;
+    GravityComponent  gravity;
 
     position.x = WIN_W * 0.5;
     position.y = WIN_H * 0.5;
     render.rect.w = PLAYER_W;
     render.rect.h = PLAYER_H;
     render.texture = tex;
+    gravity.strength = PLAYER_GRAV_STR;
 
     scene->set_render_data(eID, render);
     scene->set_position_data(eID, position);
-    scene->set_control_func(eID, control_player);
+    scene->set_gravity_data(eID, gravity);
+    scene->set_control_func(eID, control_player1);
+    scene->activate_components(eID, CMP_ALL);
+}
+
+void create_player2(SDL_Texture* tex, Scene* scene) {
+    u64 eID = scene->add_entity();
+
+    PositionComponent position;
+    RenderComponent   render;
+    ControlComponent  control;
+    GravityComponent  gravity;
+
+    position.x = WIN_W * 0.5;
+    position.y = WIN_H * 0.5;
+    render.rect.w = PLAYER_W;
+    render.rect.h = PLAYER_H;
+    render.texture = tex;
+    gravity.strength = PLAYER_GRAV_STR;
+
+    scene->set_render_data(eID, render);
+    scene->set_position_data(eID, position);
+    scene->set_gravity_data(eID, gravity);
+    scene->set_control_func(eID, control_player2);
     scene->activate_components(eID, CMP_ALL);
 }
 

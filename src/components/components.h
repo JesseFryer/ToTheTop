@@ -10,10 +10,12 @@
 #define CMP_VELOCITY 0x00000002
 #define CMP_RENDER   0x00000004
 #define CMP_CONTROL  0x00000008
+#define CMP_GRAVITY  0x00000010
 
 // for systems that require multiple components
 #define SYS_CONTROL (CMP_CONTROL | CMP_VELOCITY)
 #define SYS_MOVE    (CMP_POSITION | CMP_VELOCITY)
+#define SYS_GRAVITY (CMP_VELOCITY | CMP_GRAVITY)
 
 // check if an entity has checkComps components active 
 // activeComps is the entity's active components
@@ -37,6 +39,12 @@ struct VelocityComponent {
     VelocityComponent();
 };
 
+struct GravityComponent {
+    float strength;
+
+    GravityComponent();
+};
+
 struct RenderComponent {
     SDL_Rect rect;
     SDL_Rect textureRect; // portion of the texture
@@ -50,7 +58,7 @@ struct AnimationComponent {
     // and whatnot, also index into array of rects
 };
 
-typedef void (*ControlFunc)(Entity&, InputState*);
+typedef void (*ControlFunc)(Entity&, InputState*, float timeStep);
 struct ControlComponent {
     ControlFunc control_func;
 
@@ -67,6 +75,7 @@ struct Entity {
     VelocityComponent velocity;
     RenderComponent   render;
     ControlComponent  control;
+    GravityComponent  gravity;
 
     Entity();
     bool operator<(const Entity& other);

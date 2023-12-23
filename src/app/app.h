@@ -29,4 +29,5 @@ class App {
         u32  limit_frame_time();
         void dev_record_frame();
         void load_sprites();
+        void create_entities();
 };

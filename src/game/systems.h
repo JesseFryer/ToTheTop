@@ -5,6 +5,8 @@
 #include "../input/input.h"
 
 void render_entity(Entity& entity, SDL_Renderer* renderer);
-void control_player(Entity& entity, InputState* input);
+void control_player1(Entity& entity, InputState* input, float timeStep);
+void control_player2(Entity& entity, InputState* input, float timeStep);
 void move_entity(Entity& entity, float timeStep);
 void update_entity_rect_pos(Entity& entity);
+void apply_gravity(Entity& entity, float timeStep);
