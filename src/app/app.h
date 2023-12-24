@@ -30,4 +30,5 @@ class App {
         void dev_record_frame();
         void load_sprites();
         void create_entities();
+        void query_stack();
 };

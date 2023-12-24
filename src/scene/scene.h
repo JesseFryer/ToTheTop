@@ -5,6 +5,9 @@
 #include "../components/components.h"
 #include "../input/input.h"
 
+#define MAX_ENTITIES 70000
+#define EXCEEDED_ENTITY_LIMIT 12345678
+
 // To compose an entity:
 //   - call add_entity which will return the ID of the entity.
 
@@ -13,9 +16,12 @@
 //   - call activate_components (macros can be found in components.h).
 
 struct Scene {
-    //TODO: possibly make this a static sized array
-    std::vector<Entity> m_entities;
-    std::queue<u64>     m_reusableEntityIDs;
+    Entity m_entities[MAX_ENTITIES];
+    u64    m_entityCount;
+
+    std::queue<u64> m_reusableEntityIDs;
+
+    Scene();
 
     u64 add_entity();
     void remove_entity(u64 eID);

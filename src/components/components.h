@@ -32,9 +32,11 @@ struct PositionComponent {
     PositionComponent();
 };
 
+typedef void (*MoveFunc)(Entity& self, float timeStep);
 struct VelocityComponent {
     float xV;
     float yV;
+    MoveFunc move_func;
 
     VelocityComponent();
 };
@@ -58,7 +60,7 @@ struct AnimationComponent {
     // and whatnot, also index into array of rects
 };
 
-typedef void (*ControlFunc)(Entity&, InputState*, float timeStep);
+typedef void (*ControlFunc)(Entity& self, InputState* input, float timeStep);
 struct ControlComponent {
     ControlFunc control_func;
 

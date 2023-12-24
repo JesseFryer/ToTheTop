@@ -10,9 +10,12 @@ void create_player1(SDL_Texture* tex, Scene* scene) {
     RenderComponent   render;
     ControlComponent  control;
     GravityComponent  gravity;
+    VelocityComponent velocity;
 
     position.x = WIN_W * 0.5;
     position.y = WIN_H * 0.5;
+    velocity.move_func = move_player;
+    velocity.move_func = move_player;
     render.rect.w = PLAYER_W;
     render.rect.h = PLAYER_H;
     render.texture = tex;
@@ -20,6 +23,7 @@ void create_player1(SDL_Texture* tex, Scene* scene) {
 
     scene->set_render_data(eID, render);
     scene->set_position_data(eID, position);
+    scene->set_velocity_data(eID, velocity);
     scene->set_gravity_data(eID, gravity);
     scene->set_control_func(eID, control_player1);
     scene->activate_components(eID, CMP_ALL);
@@ -32,14 +36,17 @@ void create_player2(SDL_Texture* tex, Scene* scene) {
     RenderComponent   render;
     ControlComponent  control;
     GravityComponent  gravity;
+    VelocityComponent velocity;
 
     position.x = WIN_W * 0.5;
     position.y = WIN_H * 0.5;
+    velocity.move_func = move_player;
     render.rect.w = PLAYER_W;
     render.rect.h = PLAYER_H;
     render.texture = tex;
     gravity.strength = PLAYER_GRAV_STR;
 
+    scene->set_velocity_data(eID, velocity);
     scene->set_render_data(eID, render);
     scene->set_position_data(eID, position);
     scene->set_gravity_data(eID, gravity);
@@ -59,11 +66,13 @@ void create_moving_square(SDL_Texture* tex, Scene* scene) {
     position.y = WIN_H * 0.5;
     velocity.xV = SQUARE_SPEED * cos(theta);
     velocity.yV = SQUARE_SPEED * sin(theta);
+    velocity.move_func = move_square;
     render.rect.w = MOVING_SQUARE_W;
     render.rect.h = MOVING_SQUARE_H;
     render.texture = tex;
 
     scene->set_position_data(eID, position);
+    scene->set_velocity_data(eID, velocity);
     scene->set_velocity_data(eID, velocity);
     scene->set_render_data(eID, render);
 

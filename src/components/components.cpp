@@ -12,6 +12,7 @@ PositionComponent::PositionComponent() {
 VelocityComponent::VelocityComponent() {
     xV = 0.0f;
     yV = 0.0f;
+    move_func = nullptr;
 }
 
 GravityComponent::GravityComponent() {

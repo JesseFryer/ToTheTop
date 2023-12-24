@@ -13,11 +13,35 @@ void render_entity(Entity& entity, SDL_Renderer* renderer) {
     }
 }
 
-void move_entity(Entity& entity, float timeStep) {
-    entity.position.x += timeStep * entity.velocity.xV;
-    entity.position.y += timeStep * entity.velocity.yV;
-    if (entity.position.y >= WIN_H - 64) {
-        entity.position.y = WIN_H - 64;
+void move_square(Entity& self, float timeStep) {
+    self.position.x += timeStep * self.velocity.xV;
+    self.position.y += timeStep * self.velocity.yV;
+    if (self.position.y > WIN_H - MOVING_SQUARE_H) {
+        self.position.y = WIN_H - MOVING_SQUARE_H;
+        self.velocity.yV *= -1;
+    } else if (self.position.y < 0) {
+        self.position.y = 0; 
+        self.velocity.yV *= -1;
+    }
+    if (self.position.x > WIN_W - MOVING_SQUARE_W) {
+        self.position.x = WIN_W - MOVING_SQUARE_W;
+        self.velocity.xV *= -1;
+    } else if (self.position.x < 0) {
+        self.position.x = 0; 
+        self.velocity.xV *= -1;
+    }
+}
+
+void move_player(Entity& self, float timeStep) {
+    self.position.x += timeStep * self.velocity.xV;
+    self.position.y += timeStep * self.velocity.yV;
+    if (self.position.y > WIN_H - PLAYER_H) {
+        self.position.y = WIN_H - PLAYER_H;
+    }
+    if (self.position.x > WIN_W) {
+        self.position.x = 0;
+    } else if (self.position.x < 0 - PLAYER_W) {
+        self.position.x = WIN_W; 
     }
 }
 

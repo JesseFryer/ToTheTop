@@ -8,6 +8,8 @@
 #include "../game/systems.h"
 
 bool App::init() {
+    query_stack();
+
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         std::cout << "Failed to initialize the SDL2 library\n";
         return false;
@@ -69,9 +71,13 @@ void App::update_render(float timeStep) {
     SDL_RenderClear(m_renderer);
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
-    for (u64 eID = 0; eID < m_scene.m_entities.size(); eID++) {
-        Entity& entity = m_scene.m_entities.at(eID);
+    for (u64 eID = 0; eID < MAX_ENTITIES; eID++) {
+        Entity& entity = m_scene.m_entities[eID];
         u32 activeComps = entity.activeComponents;
+
+        if (!activeComps) {
+            continue;
+        }
 
         if (is_active(activeComps, SYS_CONTROL)) {
             entity.control.control_func(entity, &m_input, timeStep);
@@ -82,7 +88,7 @@ void App::update_render(float timeStep) {
         }
 
         if (is_active(activeComps, SYS_MOVE)) {
-            move_entity(entity, timeStep);
+            entity.velocity.move_func(entity, timeStep);
 
             if (is_active(activeComps, CMP_RENDER)) {
                 update_entity_rect_pos(entity);
@@ -139,6 +145,25 @@ void App::load_sprites() {
 }
 
 void App::create_entities() {
+    for (int i = 0; i < (MAX_ENTITIES * 0.1) - 2; i++) {
+        create_moving_square(m_sprites.get_sprite(SPR_SLIME), &m_scene);
+    }
     create_player1(m_sprites.get_sprite(SPR_PLAYER), &m_scene);
     create_player2(m_sprites.get_sprite(SPR_PLAYER), &m_scene);
+}
+
+void App::query_stack() {
+    struct rlimit limit;
+    getrlimit (RLIMIT_STACK, &limit);
+    std::cout << "current stack limit: " << limit.rlim_cur
+        << " bytes\nmax stack limit: " << limit.rlim_max 
+        << " bytes\n";
+
+    size_t stackUsage = MAX_ENTITIES * sizeof(Entity);
+    std::cout << "size of " << MAX_ENTITIES << " entities: "
+        << stackUsage << " bytes\n";
+
+    std::cout << "percentage of stack used for entities: "
+        << 100.0f * ( ((float) stackUsage) / ((float) limit.rlim_cur) )
+        << "%\n";
 }
