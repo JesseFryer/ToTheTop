@@ -11,3 +11,5 @@ void move_square(Entity& self, float timeStep);
 void move_player(Entity& self, float timeStep);
 void update_entity_rect_pos(Entity& entity);
 void apply_gravity(Entity& entity, float timeStep);
+void animate_entity(Animations* animations, Entity& entity, float timeStep);
+void update_player_animation(Entity& self);

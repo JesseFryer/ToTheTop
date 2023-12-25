@@ -6,6 +6,7 @@
 #include "../misc/stats.h"
 #include "../scene/scene.h"
 #include "../sprite/sprite.h"
+#include "../sprite/animation.h"
 
 class App {
     public:
@@ -21,6 +22,7 @@ class App {
         InputState    m_input;
         Scene         m_scene;
         Sprites       m_sprites;
+        Animations    m_animations;
 
         u32           m_lastTime;
         DevStats      m_stats;
@@ -29,6 +31,7 @@ class App {
         u32  limit_frame_time();
         void dev_record_frame();
         void load_sprites();
+        void create_animations();
         void create_entities();
         void query_stack();
 };

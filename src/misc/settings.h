@@ -19,6 +19,10 @@
 #define PLAYER_JUMP_STR 1200
 #define PLAYER_GRAV_STR 50.0f
 
-#define MOVING_SQUARE_W 8 
-#define MOVING_SQUARE_H 8
+#define MOVING_SQUARE_W 32
+#define MOVING_SQUARE_H 24
 #define SQUARE_SPEED 300
+
+#define TILE_W 32
+#define TILE_H 32
+

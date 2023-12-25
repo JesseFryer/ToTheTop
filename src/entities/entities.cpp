@@ -3,14 +3,15 @@
 #include "../game/systems.h"
 #include <SDL2/SDL_image.h>
 
-void create_player1(SDL_Texture* tex, Scene* scene) {
+void create_player1(SDL_Texture* tex, Scene* scene, u16 initAnimation) {
     u64 eID = scene->add_entity();
 
-    PositionComponent position;
-    RenderComponent   render;
-    ControlComponent  control;
-    GravityComponent  gravity;
-    VelocityComponent velocity;
+    PositionComponent  position;
+    RenderComponent    render;
+    ControlComponent   control;
+    GravityComponent   gravity;
+    VelocityComponent  velocity;
+    AnimationComponent animation;
 
     position.x = WIN_W * 0.5;
     position.y = WIN_H * 0.5;
@@ -19,13 +20,21 @@ void create_player1(SDL_Texture* tex, Scene* scene) {
     render.rect.w = PLAYER_W;
     render.rect.h = PLAYER_H;
     render.texture = tex;
+    render.textureRect.x = 0;
+    render.textureRect.y = 0;
+    render.textureRect.w = 24;
+    render.textureRect.h = 32;
     gravity.strength = PLAYER_GRAV_STR;
+    animation.animation = initAnimation;
+    animation.speed = 8;
+    animation.update_animation_func = update_player_animation;
 
     scene->set_render_data(eID, render);
     scene->set_position_data(eID, position);
     scene->set_velocity_data(eID, velocity);
     scene->set_gravity_data(eID, gravity);
     scene->set_control_func(eID, control_player1);
+    scene->set_animation_data(eID, animation);
     scene->activate_components(eID, CMP_ALL);
 }
 
@@ -70,6 +79,10 @@ void create_moving_square(SDL_Texture* tex, Scene* scene) {
     render.rect.w = MOVING_SQUARE_W;
     render.rect.h = MOVING_SQUARE_H;
     render.texture = tex;
+    render.textureRect.x = 0;
+    render.textureRect.y = 0;
+    render.textureRect.w = 454;
+    render.textureRect.h = 316;
 
     scene->set_position_data(eID, position);
     scene->set_velocity_data(eID, velocity);
@@ -80,4 +93,21 @@ void create_moving_square(SDL_Texture* tex, Scene* scene) {
             CMP_POSITION | CMP_VELOCITY | CMP_RENDER);
 
     theta += 0.01;
+}
+
+void create_tile(SDL_Texture* tex, Scene* scene, float x, float y) {
+    u64 eID = scene->add_entity();
+    PositionComponent position;
+    RenderComponent   render;
+    position.x = x;
+    position.y = y;
+    render.texture = tex;
+    render.rect.x = x;
+    render.rect.y = y;
+    render.rect.w = TILE_W;
+    render.rect.h = TILE_H;
+
+    scene->set_position_data(eID, position);
+    scene->set_render_data(eID, render);
+    scene->activate_components(eID, CMP_POSITION | CMP_RENDER);
 }

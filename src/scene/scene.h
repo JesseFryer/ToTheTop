@@ -5,7 +5,7 @@
 #include "../components/components.h"
 #include "../input/input.h"
 
-#define MAX_ENTITIES 70000
+#define MAX_ENTITIES 50000
 #define EXCEEDED_ENTITY_LIMIT 12345678
 
 // To compose an entity:
@@ -32,5 +32,6 @@ struct Scene {
     void set_render_data(u64 eID, RenderComponent& component);
     void set_gravity_data(u64 eID, GravityComponent& component);
     void set_control_func(u64 eID, ControlFunc controlFunc);
+    void set_animation_data(u64 eID, AnimationComponent& animation);
 };
 

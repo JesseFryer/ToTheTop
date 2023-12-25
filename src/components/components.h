@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include "../misc/types.h"
 #include "../input/input.h"
+#include "../sprite/animation.h"
 
 // bit-masks for m_activeComponent queries
 #define CMP_ALL      0xffffffff
@@ -11,11 +12,13 @@
 #define CMP_RENDER   0x00000004
 #define CMP_CONTROL  0x00000008
 #define CMP_GRAVITY  0x00000010
+#define CMP_ANIMATE  0x00000020
 
 // for systems that require multiple components
 #define SYS_CONTROL (CMP_CONTROL | CMP_VELOCITY)
 #define SYS_MOVE    (CMP_POSITION | CMP_VELOCITY)
 #define SYS_GRAVITY (CMP_VELOCITY | CMP_GRAVITY)
+#define SYS_ANIMATE (CMP_RENDER | CMP_ANIMATE)
 
 // check if an entity has checkComps components active 
 // activeComps is the entity's active components
@@ -55,9 +58,15 @@ struct RenderComponent {
     RenderComponent();
 };
 
+typedef void (*UpdateAnimationFunc)(Entity& self);
 struct AnimationComponent {
-    // TODO: will be like a counter and increment speed
-    // and whatnot, also index into array of rects
+    u8 animation; // macros in animation.h
+    float speed; // gets added to accumulator each frame
+    float accumulator;
+    u8    index;
+    UpdateAnimationFunc update_animation_func;
+
+    AnimationComponent();
 };
 
 typedef void (*ControlFunc)(Entity& self, InputState* input, float timeStep);
@@ -73,11 +82,12 @@ struct Entity {
     // bits are flags for components 
     u32 activeComponents;
     // entities contain all components
-    PositionComponent position;
-    VelocityComponent velocity;
-    RenderComponent   render;
-    ControlComponent  control;
-    GravityComponent  gravity;
+    PositionComponent  position;
+    VelocityComponent  velocity;
+    RenderComponent    render;
+    ControlComponent   control;
+    GravityComponent   gravity;
+    AnimationComponent animation;
 
     Entity();
     bool operator<(const Entity& other);

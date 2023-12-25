@@ -31,6 +31,14 @@ RenderComponent::RenderComponent() {
     texture = nullptr;
 }
 
+AnimationComponent::AnimationComponent() {
+    animation = 0;
+    speed = 1;
+    accumulator = 0.0f;
+    index = 0;
+    update_animation_func = nullptr;
+}
+
 ControlComponent::ControlComponent() {
     control_func = nullptr;
 }

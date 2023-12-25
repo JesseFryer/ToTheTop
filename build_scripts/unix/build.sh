@@ -12,7 +12,8 @@ src="../../src/main.cpp\
      ../../src/components/components.cpp\
      ../../src/entities/entities.cpp\
      ../../src/game/systems.cpp\
-     ../../src/sprite/sprite.cpp"
+     ../../src/sprite/sprite.cpp\
+     ../../src/sprite/animation.cpp"
 
 mkdir $outdir > /dev/null 2> /dev/null
 g++ -o $outdir$progname $src $compflags $linkflags

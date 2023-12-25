@@ -56,3 +56,7 @@ void Scene::set_gravity_data(u64 eID, GravityComponent& component) {
 void Scene::set_control_func(u64 eID, ControlFunc controlFunc) {
     m_entities[eID].control.control_func = controlFunc;
 }
+
+void Scene::set_animation_data(u64 eID, AnimationComponent& animation) {
+    m_entities[eID].animation = animation;
+}

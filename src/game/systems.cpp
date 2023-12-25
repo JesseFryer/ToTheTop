@@ -1,12 +1,13 @@
 #include "systems.h"
 #include "../misc/settings.h"
+#include "../sprite/animation.h"
 
 void render_entity(Entity& entity, SDL_Renderer* renderer) {
     if (entity.render.texture) {
         SDL_RenderCopy(
                 renderer, 
                 entity.render.texture, 
-                NULL, 
+                &entity.render.textureRect,
                 &entity.render.rect);
     } else {
         SDL_RenderFillRect(renderer, &entity.render.rect);
@@ -98,7 +99,26 @@ void control_player2(Entity& self, InputState* input, float timeStep) {
     }
 }
 
+void update_player_animation(Entity& self) {
+    if (self.velocity.xV >= 0) {
+        self.animation.animation = ANI_PLAYER_WALK_R;
+    } else {
+        self.animation.animation = ANI_PLAYER_WALK_L;
+    }
+}
+
 void update_entity_rect_pos(Entity& entity) {
     entity.render.rect.x = entity.position.x;
     entity.render.rect.y = entity.position.y;
+}
+
+void animate_entity(Animations* animations, Entity& entity, float timeStep) {
+    Animation& animation =
+        animations->m_animations[entity.animation.animation];
+    entity.animation.accumulator += entity.animation.speed * timeStep;
+    if (entity.animation.accumulator > animation.m_frameCount) {
+        entity.animation.accumulator = 0.0f;
+    }
+    entity.animation.index = entity.animation.accumulator;
+    entity.render.textureRect = animation.m_frames[entity.animation.index];
 }

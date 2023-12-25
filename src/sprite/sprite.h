@@ -8,6 +8,8 @@
 // sprite index's for get_sprite
 #define SPR_PLAYER 0 
 #define SPR_SLIME  1
+#define SPR_DIRT   2
+#define SPR_GRASS  3
 
 struct Sprites {
     SDL_Texture* m_sprites[MAX_TEXTURES];
